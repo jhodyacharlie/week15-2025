@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digeboy — Kelola Pesanan
 
-## Getting Started
+Side project halaman pesanan terbaru dengan Next.js, Prisma, dan SQLite. Fitur yang tersedia:
 
-First, run the development server:
+- Membaca, mencari, dan memfilter daftar pesanan.
+- Membuat, mengubah, dan menghapus pesanan beserta barangnya.
+- Menulis atau mengubah ulasan untuk pesanan yang sudah sampai.
+- Tampilan tema terang dan gelap.
+
+## Menjalankan secara lokal
 
 ```bash
+npm install
+npx prisma migrate deploy
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka <http://localhost:3000>. Perubahan CRUD dan ulasan di mode lokal disimpan ke `prisma/dev.db`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm run db:seed` mengisi enam pesanan contoh dan mengosongkan data order yang sudah ada. Jalankan hanya jika ingin mengganti isi database dengan data contoh.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Menyiapkan data untuk Vercel
 
-## Learn More
+Vercel menjalankan aplikasi dalam mode read-only. Endpoint tambah, ubah, hapus, dan ulasan akan mengembalikan status `403`. Endpoint baca mengambil data dari SQLite yang disertakan di repository; file disalin ke `/tmp` pada runtime agar proses baca tidak menyentuh database sumber.
 
-To learn more about Next.js, take a look at the following resources:
+Untuk memperbarui data demo yang tampil di Vercel:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Jalankan aplikasi secara lokal dan lakukan CRUD seperti biasa, atau isi ulang data contoh dengan `npm run db:seed`.
+2. Pastikan perubahan `prisma/dev.db` ikut di-commit dan di-push bersama kode. File tersebut tidak masuk `.gitignore`.
+3. Deploy ulang di Vercel. Data database yang ada di commit itu akan tampil sebagai data read-only.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Perubahan yang dilakukan di Vercel tidak disimpan. Setelah mengubah database lokal, perlu commit, push, dan deploy ulang agar data baru tampil di sana.

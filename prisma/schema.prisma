@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  storeName     String
+  storeLogo     String?
+  status        String      @default("gudang")
+  createdAt     DateTime    @default(now())
+  arrivedAt     DateTime?
+  reviewRating  Int?
+  reviewComment String?
+  reviewedAt    DateTime?
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id      Int     @id @default(autoincrement())
+  name    String
+  variant String  @default("")
+  price   Int
+  qty     Int     @default(1)
+  image   String?
+  orderId Int
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
